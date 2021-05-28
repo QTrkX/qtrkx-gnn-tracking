@@ -1,0 +1,20 @@
+train_dir   : 'data/graph_data/mu200_1pT/dataset_50_50/train'
+valid_dir   : 'data/graph_data/mu200_1pT/dataset_50_50/valid'
+dataset     : 'mu200_1pT'
+log_dir     : 'logs/mu200_1pT/CGNN_hid4_it3_layer1_qubit0/'
+run_type    : 'new_run'
+gpu         : '-1'
+n_files     : 100
+n_valid     : 50
+n_train     : 50
+lr_c        : 0.01
+batch_size  : 1
+n_iters     : 3
+n_epoch     : 30
+TEST_every  : 50
+hid_dim     : 4
+network     : 'CGNN'
+optimizer: 'Adam'
+loss_func: 'BinaryCrossentropy'
+n_thread    : 4
+log_verbosity: 2

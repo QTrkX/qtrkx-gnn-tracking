@@ -1,0 +1,35 @@
+train_dir   : 'data/graph_data/mu200_1pT/dataset_50_50/train'
+valid_dir   : 'data/graph_data/mu200_1pT/dataset_50_50/valid'
+dataset     : 'mu200_1pT'
+log_dir     : 'logs/mu200_1pT/qc10_hid4_it3_layer3_qubit4_analytic/'
+run_type    : 'continue'
+gpu         : '-1'
+n_files     : 100
+n_valid     : 50
+n_train     : 50
+batch_size  : 1 
+lr_c        : 0.01
+lr_q        : 0.01
+n_iters     : 3
+n_epoch     : 20
+TEST_every  : 50
+hid_dim     : 4
+network     : 'GNN2'
+optimizer: 'Adam'
+loss_func: 'BinaryCrossentropy'
+n_thread    : 4
+log_verbosity: 2
+EN_qc:
+  PQC_id  : '10'
+  IEC_id  : 'simple_encoding_y'
+  MC_id   : 'measure_all'
+  n_layers : 3
+  repetitions: 0
+  n_qubits: 4
+NN_qc:
+  PQC_id  : '10'
+  IEC_id  : 'simple_encoding_y'
+  MC_id   : 'measure_all'
+  n_layers : 3
+  repetitions: 0
+  n_qubits: 4
