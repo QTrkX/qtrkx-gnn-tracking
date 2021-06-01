@@ -12,4 +12,8 @@ Execute the following to train the model.
 
 ``` python3 train.py [PATH-TO-CONFIG-FILE] ```
 
+or use the following to train multiple instances in parallel.
+
+``` source send_jobs_multiple.sh [PATH-TO-CONFIG-FILE] [NUM_RUNS] ```
+
 ## Publication list:
