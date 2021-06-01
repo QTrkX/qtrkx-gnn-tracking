@@ -6,7 +6,7 @@
 
 ## How to use?
 
-Use [```train.py```](./train.py) to train a model. Models are available in [```./qnetworks```](./qnetworks) folder. Choose the model and other hyperparameters using a configuration file (see [```./configs```](./configs) folder for examples).
+Use [```train.py```](./train.py) to train a model. Models are available in [```qnetworks```](./qnetworks) folder. Choose the model and other hyperparameters using a configuration file (see [```configs```](./configs) folder for examples).
 
 Execute the following to train the model. 
 
