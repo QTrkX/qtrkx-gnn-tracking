@@ -37,23 +37,6 @@ def sparse_to_graph(X, Ri_rows, Ri_cols, Ro_rows, Ro_cols, y, dtype=np.float32):
     Ro[Ro_rows, Ro_cols] = 1
     return Graph(X, Ri, Ro, y)
 
-'''
-class custom_hit_dataset(torch.utils.data.Dataset):
-    """ create torch dataset to be used for Dataloader"""
-    def __init__(self,data_dir, n_data):
-        self.data = get_dataset(data_dir, n_data)
-        self.len = n_data
-        #self.dev = torch.device("cuda:0")
-        #self.dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        
-    def __getitem__(self, index):
-        X, Ri, Ro, y = self.data[index]
-        layers = find_layer(np.dot(np.transpose(Ro),X))
-        return map2angle(X), Ri, Ro, y, layers
-    
-    def __len__(self):
-        return self.len
-'''
 def parse_args():
     # generic parser, nothing fancy here
     parser = argparse.ArgumentParser(description='Load config file!')
@@ -216,81 +199,6 @@ def true_fake_weights(labels):
         raise ValueError('dataset not defined')
 
     return [weight_list[int(labels[i])] for i in range(labels.shape[0])]
-
-##############################
-#### DEPRECATED FUNCTIONS ####    
-##############################
-'''
-def layer_by_layer_weights(layers, labels):
-    weight_list = [[0.32026196, 0.58726128],
-         [0.76944671, 0.69048952],
-         [1.12929807, 0.82353159],
-         [1.03844715, 0.85277511],
-         [1.65224186, 0.8431246 ],
-         [1.77346433, 1.00975554],
-         [2.78307741, 1.20764775],
-         [5.12334141, 1.40839888],
-         [6.03889569, 1.70136787]]
-    
-    return [weight_list[int(layers[i])][int(labels[i])] for i in range(labels.shape[0])]
-
-
-def class_weights(labels):
-    n_edges      = labels.shape[0]
-    n_class      = [n_edges - sum(labels), sum(labels)]
-    class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)] 
-    return [class_weight[int(labels[i])] for i in range(n_edges)]   
-'''
-#################
-'Not Currently Used'
-"""
-def train_layered_step(input_data, labels):
-    # calculate weight for each edge to avoid class imbalance
-    weights = tf.convert_to_tensor(true_fake_weights(labels))
-    labels = tf.reshape(tf.convert_to_tensor(labels),shape=(labels.shape[0],1))
-
-    with tf.GradientTape() as tape:
-        preds = model(input_data)
-        loss_eval = loss_fn(labels, preds, sample_weight=weights)
-
-    grads = tape.gradient(loss_eval, model.trainable_variables)
-
-    q_vars = []
-    c_vars = []
-    for idx, item in enumerate(model.trainable_variables):
-        if idx=='2' or idx=='7':
-            q_vars.append(item) 
-        else:
-            c_vars.append(item)
-
-    q_grads = []
-    c_grads = []
-    for idx, item in enumerate(grads):
-        if idx=='2' or idx=='7':
-            q_grads.append(item) 
-        else:
-            c_grads.append(item)
-
-    opt_q.apply_gradients(zip(q_grads, q_vars))
-    opt_c.apply_gradients(zip(c_grads, c_vars))
-
-    return loss_eval, grads
-"""
-"""
-def train_step(input_data, labels):
-    # calculate weight for each edge to avoid class imbalance
-    weights = tf.convert_to_tensor(true_fake_weights(labels))
-    labels = tf.reshape(tf.convert_to_tensor(labels),shape=(labels.shape[0],1))
-
-    with tf.GradientTape() as tape:
-        preds = model(input_data)
-        loss_eval = loss_fn(labels, preds, sample_weight=weights)
-
-    grads = tape.gradient(loss_eval, model.trainable_variables)
-    opt.apply_gradients(zip(grads, model.trainable_variables))
-
-    return loss_eval, grads
-"""
 
 def load_params(model, log_path):
     n_layers = len(glob.glob('{}*{}*'.format(log_path,'parameters')))

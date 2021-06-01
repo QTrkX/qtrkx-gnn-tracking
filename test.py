@@ -1,11 +1,18 @@
-import sys,os,time,datetime
+import sys
+import os
+import time
+import datetime
 import numpy as np
 from sklearn import metrics
 from tools.tools import *
 import tensorflow as tf
 
 def test(config, model, test_type):
-    print(str(datetime.datetime.now()) + ' Starting testing the %s set with '%(test_type) + str(config['n_valid']) + ' subgraphs!')
+    print(
+        str(datetime.datetime.now()) 
+        + ' Starting testing the %s set with '%(test_type)
+        + str(config['n_valid']) + ' subgraphs!'
+        )
 
     # Start timer
     t_start = time.time()
@@ -19,7 +26,6 @@ def test(config, model, test_type):
         valid_data = get_dataset(config['train_dir'], config['n_train'])
         n_test = config['n_train']
         log_extension = 'training'
-
 
     # Load loss function
     loss_fn = getattr(tf.keras.losses, config['loss_func'])()
@@ -60,23 +66,27 @@ def test(config, model, test_type):
     #n_class = [n_edges - sum(labels), sum(labels)]
 
     fpr, tpr, _ = metrics.roc_curve(labels.astype(int),preds,pos_label=1 )
-    auc                = metrics.auc(fpr,tpr)		
-    #accuracy           = ((1-fpr[len(fpr)//2])*n_class[0]+tpr[len(tpr)//2]*n_class[1])/n_edges	
-    #precision          = metrics.average_precision_score(labels.astype(int),preds)
-    
-    tn, fp, fn, tp     = metrics.confusion_matrix(labels.astype(int),(preds > 0.3)*1).ravel() # get the confusion matrix for 0.3 threshold
+    auc                = metrics.auc(fpr,tpr)
+
+    tn, fp, fn, tp = metrics.confusion_matrix(
+        labels.astype(int),(preds > 0.3)*1
+        ).ravel() # get the confusion matrix for 0.3 threshold
     accuracy_3  = (tp+tn)/(tn+fp+fn+tp)
     precision_3 = tp/(tp+fp) # also named purity
     recall_3    = tp/(tp+fn) # also named efficiency
     f1_3        = (2*precision_3*recall_3)/(precision_3+recall_3) 
 
-    tn, fp, fn, tp     = metrics.confusion_matrix(labels.astype(int),(preds > 0.5)*1).ravel() # get the confusion matrix for 0.5 threshold
+    tn, fp, fn, tp = metrics.confusion_matrix(
+        labels.astype(int),(preds > 0.5)*1
+        ).ravel() # get the confusion matrix for 0.5 threshold
     accuracy_5  = (tp+tn)/(tn+fp+fn+tp)
     precision_5 = tp/(tp+fp) # also named purity
     recall_5    = tp/(tp+fn) # also named efficiency
     f1_5        = (2*precision_5*recall_5)/(precision_5+recall_5) 
 
-    tn, fp, fn, tp     = metrics.confusion_matrix(labels.astype(int),(preds > 0.7)*1).ravel() # get the confusion matrix for 0.7 threshold
+    tn, fp, fn, tp = metrics.confusion_matrix(
+        labels.astype(int),(preds > 0.7)*1
+        ).ravel() # get the confusion matrix for 0.7 threshold
     accuracy_7  = (tp+tn)/(tn+fp+fn+tp)
     precision_7 = tp/(tp+fp) # also named purity
     recall_7    = tp/(tp+fn) # also named efficiency

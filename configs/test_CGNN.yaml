@@ -1,7 +1,7 @@
-train_dir   : 'data/graph_data/mu200_1pT/dataset_50_50/train'
-valid_dir   : 'data/graph_data/mu200_1pT/dataset_50_50/valid'
+train_dir   : 'data/train'
+valid_dir   : 'data/valid'
 dataset     : 'mu200_1pT'
-log_dir     : 'logs/mu200_1pT/CGNN_hid4_it3_layer1_qubit0/'
+log_dir     : 'logs/test_CGNN/'
 run_type    : 'new_run'
 gpu         : '-1'
 n_files     : 100

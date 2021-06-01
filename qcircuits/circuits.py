@@ -5,14 +5,7 @@ def measure_all(qubits, n_measurements):
     return [cirq.Z(qubits[i]) for i in range(n_measurements)]
 def measure_last(qubits, n_measurements=1):
     return cirq.Z(qubits[-1])
-'''
-def state_vector(n_qubits):
-    return qml.probs(wires=[0])# need to look in more detail
-def probs(n_qubits):
-    return qml.probs(wires=[i for i in range(n_qubits)])
-def sample(n_qubits):
-    return [qml.sample(qml.PauliZ(wires=i)) for i in range(n_qubits)]
-'''
+
 ###############################################################
 ###############################################################
 #############    INFORMATION ENCODING CIRCUITS    #############
@@ -205,75 +198,3 @@ def two_qubit_ry(param0, param1, circuit, qubit0, qubit1):
         circuit.append(cirq.ry(param1)(qubit1))
         circuit.append(cirq.CZ(qubit0, qubit1))
 ###############################################################################
-'''
-def simple_encoding_y(n_qubits=4):
-    input_  = sympy.symbols('x:{}'.format(n_qubits))
-    qubits = cirq.GridQubit.rect(input_.shape[0], 1)
-    circuit = cirq.Circuit()
-    for idx, qubit in enumerate(qubits):
-        circuit.append(cirq.ry(input_[idx])(qubit))
-    return circuit
-
-def simple_encoding_z(input_):
-    qubits = cirq.GridQubit.rect(input_.shape[0], 1)
-    circuit = cirq.Circuit()
-    for idx, qubit in enumerate(qubits):
-        circuit.append(cirq.H(qubit))
-        circuit.append(cirq.rz(input_[idx])(qubit))
-    return circuit
-
-def ZZ_feature_map(input_, n_iter=2):
-    n_qubits = input_.shape[0]
-    qubits = cirq.GridQubit.rect(input_.shape[0], 1)
-    circuit = cirq.Circuit()
-    for idx, qubit in enumerate(qubits):
-        circuit.append(cirq.H(qubit))
-
-    for _ in range(n_iter):
-        for idx, qubit in enumerate(qubits):
-            circuit.append(cirq.rz(input_[idx])(qubit))
-        for idx in range(n_qubits-1):
-            for idy in range(idx+1,n_qubits):
-                circuit.append(cirq.CX(qubits[i], qubits[j]))
-                circuit.append(cirq.rz((np.pi-inputs_[idx])*(np.pi-inputs_[idy]))(qubits[idy]))
-                circuit.append(cirq.CX(qubits[i], qubits[j]))
-
-    return circuit
-
-def pqc_10(n_layers=1, n_qubits=4):
-    qubits  = cirq.GridQubit.rect(n_qubits, 1)
-    circuit = cirq.Circuit()
-    input_  = sympy.symbols('x:{}'.format(n_qubits))
-    params  = sympy.symbols('theta:{}'.format(n_qubits*(1+n_layers)))
-    for idx, qubit in enumerate(qubits):
-        circuit.append(cirq.ry(input_[idx])(qubit))
-    for i, qubit in enumerate(qubits):
-        #symbol = sympy.Symbol('theta_{}'.format(i+1))
-        circuit.append(cirq.ry(params[i])(qubit))
-    for layer in range(n_layers):
-        for i in range(n_qubits):
-            circuit.append(cirq.CZ(qubits[(n_qubits-2-i)%n_qubits], qubits[(n_qubits-1-i)%n_qubits]))
-        for i, qubit in enumerate(qubits):
-            #symbol = sympy.Symbol('theta_{}'.format(i+1+n_qubits*(layer+1)))
-            circuit.append(cirq.ry(params[i+n_qubits*(layer+1)])(qubit))
-    return circuit, [cirq.Z(qubits[i]) for i in range(n_qubits)]
-
-
-def pqc(n_layers=1, n_qubits=4):
-    qubits  = cirq.GridQubit.rect(n_qubits, 1)
-    circuit = cirq.Circuit()
-    input_  = sympy.symbols('x:{}'.format(n_qubits))
-    params  = sympy.symbols('theta:{}'.format(n_qubits*(1+n_layers)))
-    for idx, qubit in enumerate(qubits):
-        circuit.append(cirq.ry(input_[idx])(qubit))
-    for i, qubit in enumerate(qubits):
-        #symbol = sympy.Symbol('theta_{}'.format(i+1))
-        circuit.append(cirq.ry(params[i])(qubit))
-    for layer in range(n_layers):
-        for i in range(n_qubits):
-            circuit.append(cirq.CZ(qubits[(n_qubits-2-i)%n_qubits], qubits[(n_qubits-1-i)%n_qubits]))
-        for i, qubit in enumerate(qubits):
-            #symbol = sympy.Symbol('theta_{}'.format(i+1+n_qubits*(layer+1)))
-            circuit.append(cirq.ry(params[i+n_qubits*(layer+1)])(qubit))
-    return circuit, qubits
-'''
