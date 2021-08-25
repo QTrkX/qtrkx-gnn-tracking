@@ -1,17 +1,17 @@
 train_dir   : 'data/train'
 valid_dir   : 'data/valid'
 dataset     : 'mu200_1pT'
-log_dir     : 'logs/test_QGNN/'
+log_dir     : 'logs/test/'
 run_type    : 'new_run'
 gpu         : '-1'
-n_files     : 100
-n_valid     : 50
-n_train     : 50
+n_files     : 4
+n_valid     : 2
+n_train     : 2
 batch_size  : 1 
 lr_c        : 0.01
 n_iters     : 3
-n_epoch     : 20
-TEST_every  : 50
+n_epoch     : 2
+TEST_every  : 2
 hid_dim     : 4
 network     : 'QGNN'
 optimizer: 'Adam'

@@ -1,0 +1,12 @@
+name: qtrkx
+dependencies:
+  - python=3.8.5
+  - numpy=1.18.5
+  - pip
+  - pip:
+    - pyyaml
+    - scikit-learn==0.23.2
+    - matplotlib==3.2.2
+    - tensorflow==2.3.1
+    - cirq==0.9.1
+    - tensorflow_quantum==0.4.0
