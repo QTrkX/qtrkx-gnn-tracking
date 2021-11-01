@@ -12,7 +12,7 @@ time.
 ```bash
 git clone https://github.com/QTrkX/qtrkx-gnn-tracking.git
 cd qtrkx-gnn-tracking
-conda create env --file environment.yml
+conda env create --file environment.yml
 conda activate qtrkx
 ```
 
