@@ -3,6 +3,25 @@ import tensorflow_quantum as tfq
 import numpy as np
 import cirq
 from qcircuits.QCircuit import QCircuit
+
+###############################################################################
+class Rescale01(tf.keras.layers.Layer):
+    def __init__(self, name='Rescale01'):
+        super(Rescale01, self).__init__(name=name)
+
+    def call(self, X):
+        X = tf.divide(
+                tf.subtract(
+                    X, 
+                    tf.reduce_min(X)
+                ), 
+                tf.subtract(
+                    tf.reduce_max(X), 
+                    tf.reduce_min(X)
+                ),
+            lambda: X
+        )
+        return X
 ###############################################################################
 class EdgeNet(tf.keras.layers.Layer):
     def __init__(self, name='EdgeNet'):
@@ -35,10 +54,12 @@ class EdgeNet(tf.keras.layers.Layer):
 
         # Classical input layer of the Node Network
         # takes input data and feeds it to the PQC layer
-        self.input_layer = tf.keras.layers.Dense(
-            self.n_qubits, 
-            activation='sigmoid'
-        )
+        self.input_layer = tf.keras.Sequential([
+            tf.keras.layers.Dense(
+                self.n_qubits, 
+                activation='relu'),
+            Rescale01()
+        ])
         
         # Prepare PQC layer
         if (dp_noise!=None):
@@ -140,10 +161,12 @@ class NodeNet(tf.keras.layers.Layer):
 
         # Classical input layer of the Node Network
         # takes input data and feeds it to the PQC layer
-        self.input_layer = tf.keras.layers.Dense(
-            self.n_qubits, 
-            activation='sigmoid'
-        )
+        self.input_layer = tf.keras.Sequential([
+            tf.keras.layers.Dense(
+                self.n_qubits, 
+                activation='relu'),
+            Rescale01()
+        ])
 
         # Prepare PQC layer
         if (dp_noise!=None):
@@ -161,10 +184,13 @@ class NodeNet(tf.keras.layers.Layer):
             raise ValueError('Wrong PQC Specifications!')
 
         # Classical readout layer
-        self.readout_layer = tf.keras.layers.Dense(
-            GNN.config['hid_dim'],
-            activation='sigmoid'
-        )
+        self.readout_layer = tf.keras.Sequential([
+            tf.keras.layers.Dense(
+                GNN.config['hid_dim'], 
+                activation='relu'),
+            Rescale01()
+        ])
+
         # Initialize parameters of the PQC
         self.params = tf.Variable(tf.random.uniform(
             shape=(1,qc.n_params),
@@ -226,7 +252,7 @@ class GNN(tf.keras.Model):
         # Define Initial Input Layer
         self.InputNet =  tf.keras.layers.Dense(
             GNN.config['hid_dim'], input_shape=(3,),
-            activation='sigmoid',name='InputNet'
+            activation='relu',name='InputNet'
         )
         self.EdgeNet  = EdgeNet(name='EdgeNet')
         self.NodeNet  = NodeNet(name='NodeNet')

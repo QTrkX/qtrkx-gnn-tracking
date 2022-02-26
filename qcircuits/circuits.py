@@ -16,10 +16,10 @@ def simple_encoding_y(circuit, qubits, n_qubits=4):
     for idx, qubit in enumerate(qubits):
         circuit.append(cirq.ry(input_[idx])(qubit))
 def yz_arccos(circuit, qubits, n_qubits=4):
-        input_  = sympy.symbols('x:{}'.format(n_qubits))
-        for idx, qubit in enumerate(qubits):
-                circuit.append(cirq.ry(input_[idx])(qubit))
-                circuit.append(cirq.rz(input_[idx])(qubit))
+    input_  = sympy.symbols('x:{}'.format(n_qubits))
+    for idx, qubit in enumerate(qubits):
+        circuit.append(cirq.ry(input_[idx])(qubit))
+        circuit.append(cirq.rz(input_[idx])(qubit))
 def simple_encoding_z(circuit, qubits, n_qubits=4):
     input_  = sympy.symbols('x:{}'.format(n_qubits))
     for idx, qubit in enumerate(qubits):
@@ -49,8 +49,8 @@ def ZZFeatureMap(circuit, qubits, n_qubits=4):
 #############    PARAMETRIZED QUANTUM CIRCUITS    #############
 ###############################################################
 ###############################################################
-def qc10_pqc(circuit, qubits, n_layers=1, n_qubits=4):
-    params  = sympy.symbols('theta:{}'.format(n_qubits*(1+n_layers)))
+def qc10_pqc(circuit, qubits, n_layers=1, n_qubits=4, symbol_offset=0):
+    params = sympy.symbols('theta{}:{}'.format(symbol_offset, symbol_offset + n_qubits*(1+n_layers)))
     for i, qubit in enumerate(qubits):
         #symbol = sympy.Symbol('theta_{}'.format(i+1))
         circuit.append(cirq.ry(params[i])(qubit))
@@ -60,6 +60,50 @@ def qc10_pqc(circuit, qubits, n_layers=1, n_qubits=4):
         for i, qubit in enumerate(qubits):
             #symbol = sympy.Symbol('theta_{}'.format(i+1+n_qubits*(layer+1)))
             circuit.append(cirq.ry(params[i+n_qubits*(layer+1)])(qubit))
+
+    return params
+###############################################################################
+def qc10_pqc_identity(circuit, qubits, n_layers=1, n_qubits=4):
+    offset = 0
+    for layer in range(n_layers):
+        offset += generate_identity_qnn(qc10_pqc, circuit, qubits, 2, n_qubits, symbol_offset=offset)
+###############################################################################
+def qc10_pqc_two_design(circuit, qubits, n_layers=1, n_qubits=4):
+    params  = sympy.symbols('theta:{}'.format(n_qubits*(1+n_layers)))
+    for i, qubit in enumerate(qubits):
+        circuit.append(cirq.ry(params[i])(qubit))
+    for layer in range(n_layers):
+        for i in range(n_qubits-1):
+            circuit.append(cirq.CZ(qubits[(n_qubits-2-i)%n_qubits], qubits[(n_qubits-1-i)%n_qubits]))
+        for i, qubit in enumerate(qubits):
+            circuit.append(cirq.ry(params[i+n_qubits*(layer+1)])(qubit))
+###############################################################################
+def qc10_2_pqc(circuit, qubits, n_layers=1, n_qubits=4):
+    params  = sympy.symbols('theta:{}'.format(n_qubits*(1+n_layers)))
+    for i, qubit in enumerate(qubits):
+        circuit.append(cirq.ry(params[i])(qubit))
+    for layer in range(n_layers):
+        n_qubits = len(qubits)
+        for i in range(n_qubits):
+                circuit.append(cirq.CNOT(qubits[i%n_qubits], qubits[(i+1)%n_qubits]))
+        for i, qubit in enumerate(qubits):
+            circuit.append(cirq.rz(params[i+n_qubits*(layer+1)])(qubit))
+###############################################################################
+def qc10_3_pqc(circuit, qubits, n_layers=1, n_qubits=4):
+    params = sympy.symbols('theta:{}'.format(n_qubits*(1+n_layers)))
+    for i, qubit in enumerate(qubits):
+        circuit.append(cirq.ry(params[i])(qubit))
+    for layer in range(n_layers):
+        for i in range(n_qubits):
+            circuit.append(cirq.CZ(qubits[i-1],qubits[i]))
+        for i, qubit in enumerate(qubits):
+            random_n = np.random.uniform()
+            if random_n > 2. / 3.:
+                circuit.append(cirq.rz(params[i+n_qubits*(layer+1)])(qubit))
+            elif random_n > 1. / 3.:
+                circuit.append(cirq.ry(params[i+n_qubits*(layer+1)])(qubit))
+            else:
+                circuit.append(cirq.rx(params[i+n_qubits*(layer+1)])(qubit))
 ###############################################################################
 def generic_pqc(circuit, qubits, n_layers=1, n_qubits=4):
     params  = sympy.symbols('theta:{}'.format(6*n_qubits*n_layers))
@@ -198,3 +242,35 @@ def two_qubit_ry(param0, param1, circuit, qubit0, qubit1):
         circuit.append(cirq.ry(param1)(qubit1))
         circuit.append(cirq.CZ(qubit0, qubit1))
 ###############################################################################
+def generate_identity_qnn(circuit_func, circuit, qubits, n_layers=1, n_qubits=4, symbol_offset=0):
+    """Generate random QNN's with the same structure from Grant et al."""
+    # from https://www.tensorflow.org/quantum/tutorials/barren_plateaus
+    
+    # Generate initial block with symbols.
+    U = cirq.Circuit()
+    symbols = circuit_func(U, qubits, 1, n_qubits, symbol_offset=symbol_offset)
+    offset = len(symbols)
+    circuit += U
+
+    # Generate dagger of initial block without any symbols.
+    U_dagger = U**-1    
+    resolver = {}
+    for symbol in symbols:
+        resolver[symbol] = np.random.uniform() * 2 * np.pi
+    circuit += cirq.resolve_parameters(U_dagger, param_resolver=resolver)
+
+    for _ in range(n_layers - 1):
+        U = cirq.Circuit()
+        symbols = circuit_func(U, qubits, 1, n_qubits)
+        resolver = {}
+        for symbol in symbols:
+            resolver[symbol] = np.random.uniform() * 2 * np.pi
+        U = cirq.resolve_parameters(U, param_resolver=resolver)
+    
+        # Add U
+        circuit += U
+
+        # Add U^dagger
+        circuit += U**-1
+    
+    return offset
