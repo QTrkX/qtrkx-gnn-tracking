@@ -4,6 +4,14 @@
   <img src="media/q_trkx_logo.png">
 </p>
 
+## Publication:
+
+[Hybrid quantum classical graph neural networks for particle track reconstruction](https://link.springer.com/article/10.1007/s42484-021-00055-9)
+
+You can cite this article as;
+
+Tüysüz, C., Rieger, C., Novotny, K. et al. Hybrid quantum classical graph neural networks for particle track reconstruction. Quantum Mach. Intell. 3, 29 (2021). https://doi.org/10.1007/s42484-021-00055-9
+
 ## How to use?
 
 First, please refer to our [installation guide](docs/Installation.md)
@@ -28,6 +36,4 @@ or use the following to train multiple instances in parallel.
 source send_jobs_multiple.sh [PATH-TO-CONFIG-FILE] [NUM_RUNS]
 ```
 
-## Talks and Publications:
 
-The list will be updated soon.
