@@ -72,15 +72,18 @@
         "feature_map": "ZZFeatureMap",
         "yz_arccos": "yz_arccos"
     },
-    "qc_pqc_dict" : {
+    "qc_pqc_dict": {
         "19": "qc19_pqc",
         "15": "qc15_pqc",
-        "14"  : "qc14_pqc",
-        "10"  : "qc10_pqc",
-        "10P"  : "qc10P_pqc",
-        "7"  : "qc7_pqc",
-        "6"  : "qc6_pqc",
-        "3"  : "qc3_pqc",
+        "14": "qc14_pqc",
+        "10": "qc10_pqc",
+        "10P": "qc10P_pqc",
+        "10_2des": "qc10_pqc_two_design",
+        "10_2": "qc10_2_pqc",
+        "10_3": "qc10_3_pqc",
+        "7": "qc7_pqc",
+        "6": "qc6_pqc",
+        "3": "qc3_pqc",
         "15_4": "qc15_4_pqc",
         "15_6": "qc15_6_pqc",
         "14_4": "qc14_4_pqc",
@@ -97,6 +100,7 @@
         "generic": "generic_pqc",
         "TTN": "TTN",
         "MPS": "MPS",
-        "10_local"  : "qc10_pqc_local"
+        "10_local": "qc10_pqc_local",
+        "10_identity": "qc10_pqc_identity"
     }
 }

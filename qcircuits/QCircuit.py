@@ -29,6 +29,14 @@ class QCircuit:
 		
 		return self.circuit, self.qubits
 
+	def pqc_circuit(self):
+		self.qubits  = cirq.GridQubit.rect(self.n_qubits, 1)
+		self.circuit = cirq.Circuit()
+
+		self.PQC()(self.circuit, self.qubits, n_layers = self.n_layers, n_qubits = self.n_qubits)
+		
+		return self.circuit, self.qubits
+
 	def IEC(self):
 		'''information encoding circuit'''
 		return getattr(qcircuits, self.metadata['qc_iec_dict'][self.IEC_id])
@@ -75,6 +83,14 @@ class QCircuit:
 			n_params = 2*self.n_qubits - 1
 		elif self.PQC_id == '10_local':
 			n_params = self.n_qubits*self.n_layers+1
+		elif self.PQC_id == '10_2des':
+			n_params = self.n_qubits*(self.n_layers+1)
+		elif self.PQC_id == '10_2':
+			n_params = self.n_qubits*(self.n_layers+1)
+		elif self.PQC_id == '10_3':
+			n_params = self.n_qubits*(self.n_layers+1)
+		elif self.PQC_id == '10_identity':
+			n_params = self.n_qubits*(self.n_layers+1)*2
 		else:
 			raise ValueError('PQC weights not defined')
 		return n_params
